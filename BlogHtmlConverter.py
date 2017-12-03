@@ -19,7 +19,8 @@ KIND_NO_AREA = 0
 KIND_DIV_AREA = 1
 KIND_TALK_Q_AREA = 2
 KIND_TALK_A_AREA = 3
-KIND_AD_AREA = 4
+KIND_LIST_1 = 4
+KIND_AD_AREA = 5
 
 
 
@@ -29,6 +30,7 @@ StrBlock型の変数にデータをセットする
 [div]
 [talk_q]
 [talk_a]
+[list_1]
 [ad]
 """
 def BlockConvert(src_txt):
@@ -143,6 +145,22 @@ def GetBlockString(startIndex, src_txt):
         getStr = src_txt[index+len('[talk_a]') + 1:nextIndex-1]
         closeTagLen = len('[/talk_a]')
 
+    #list_1タグ
+    index = src_txt.find('[list_1]', startIndex)
+    if(index >= 0 and index < minIndex):
+        minIndex = index
+
+        kind = KIND_LIST_1
+        
+        nextIndex = src_txt.find('[/list_1]',minIndex)  # indexは1(2文字目)
+
+        #print nextIndex
+
+        # list_1の要素を取ってみる
+        #-1している理由は、[/list_1]の前が改行コードのため
+        getStr = src_txt[index+len('[list_1]') + 1:nextIndex-1]
+        closeTagLen = len('[/list_1]')
+
     return (kind,getStr,nextIndex+closeTagLen)
 
 
@@ -159,6 +177,8 @@ def ConvertHtml(blocks):
             str = TagTalk(KIND_TALK_Q_AREA, block['text'])
         elif block['kind']  == KIND_TALK_A_AREA:
             str = TagTalk(KIND_TALK_A_AREA, block['text'])
+        elif block['kind']  == KIND_LIST_1:
+            str = TagList1(block['text'])            
         else:
             print u'該当する値はありません'
 
@@ -225,6 +245,20 @@ def TagAd(srcStr):
     f.close()
 
     outStr = src_txt
+
+    return outStr
+
+def TagList1(srcStr):
+    # 一行づつ取得
+    srcStrs = srcStr.split("\n")
+    outStr = ""
+
+    #コメント部分の修正
+    for i in range(len(srcStrs)):
+        outStr += '<li>'+ srcStrs[i] + '</li>'
+
+    #uiの追加
+    outStr = u'<ul class="hikage_list">' + outStr +'</ul>'
 
     return outStr
 
