@@ -22,7 +22,7 @@ KIND_TALK_A_AREA = 3
 KIND_LIST_1 = 4
 KIND_AD_AREA = 5
 
-
+MODE_LIST_1 = 1
 
 """
 StrBlock型の変数にデータをセットする
@@ -193,12 +193,24 @@ def TagDiv(srcStr):
     srcStrs =  srcStr.split("\n")
     outStr = "<div>"
 
-
+    mode = 0
     #一行ずつ処理する
     for i in range(len(srcStrs)):
         src =""
 
-        if srcStrs[i].find('###') >= 0 :
+        if srcStrs[i].find('[list_1]') >= 0 :    #listか
+            src = u'<ul class="hikage_list">' 
+            mode = MODE_LIST_1
+
+        elif srcStrs[i].find('[/list_1]') >= 0 :    #list終了か
+            src = u'</ul>'
+            mode = 0
+
+        elif mode == MODE_LIST_1:
+            src = '<li>'+ srcStrs[i] + '</li>'
+            #リスト作成
+
+        elif srcStrs[i].find('###') >= 0 :
             src = '<h3 class="hikage">' + srcStrs[i][3:] + '</h3>'
             src = '<p>' +src + '</p>'
 
