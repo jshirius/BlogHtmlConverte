@@ -7,7 +7,7 @@ u"""
 
 import sys
 import codecs
-
+import re
 
 
 """
@@ -20,7 +20,8 @@ KIND_DIV_AREA = 1
 KIND_TALK_Q_AREA = 2
 KIND_TALK_A_AREA = 3
 KIND_LIST_1 = 4
-KIND_AD_AREA = 5
+KIND_DIV_WAKU = 5
+KIND_AD_AREA = 6
 
 MODE_LIST_1 = 1
 
@@ -162,6 +163,22 @@ def GetBlockString(startIndex, src_txt):
         getStr = src_txt[index+len('[list_1]') + 1:nextIndex-1]
         closeTagLen = len('[/list_1]')
 
+    #枠の表示
+    index = src_txt.find('[div_waku]', startIndex)
+    if(index >= 0 and index < minIndex):
+        minIndex = index
+
+        kind = KIND_DIV_WAKU
+        
+        nextIndex = src_txt.find('[/div_waku]',minIndex)  # indexは1(2文字目)
+
+        #print nextIndex
+
+        # div_wakuの要素を取ってみる
+        #-1している理由は、[/div_waku]の前が改行コードのため
+        getStr = src_txt[index+len('[div_waku]') + 1:nextIndex-1]
+        closeTagLen = len('[/div_waku]')    
+    
     return (kind,getStr,nextIndex+closeTagLen)
 
 
@@ -179,7 +196,9 @@ def ConvertHtml(blocks):
         elif block['kind']  == KIND_TALK_A_AREA:
             str = TagTalk(KIND_TALK_A_AREA, block['text'])
         elif block['kind']  == KIND_LIST_1:
-            str = TagList1(block['text'])            
+            str = TagList1(block['text'])    
+        elif block['kind'] == KIND_DIV_WAKU:
+            str = TagDivWaku(block['text'])
         else:
             print u'該当する値はありません'
 
@@ -193,6 +212,48 @@ def TagDiv(srcStr):
     #一行づつ取得
     srcStrs =  srcStr.split("\n")
     outStr = "<div>"
+
+    mode = 0
+    #一行ずつ処理する
+    for i in range(len(srcStrs)):
+        src =""
+
+        if srcStrs[i].find('[list_1]') >= 0 :    #listか
+            src = u'<ul class="hikage_list">' 
+            mode = MODE_LIST_1
+
+        elif srcStrs[i].find('[/list_1]') >= 0 :    #list終了か
+            src = u'</ul>'
+            mode = 0
+
+        elif mode == MODE_LIST_1:
+            src = '<li>'+ srcStrs[i] + '</li>'
+            #リスト作成
+
+        elif srcStrs[i].find('###') >= 0 :
+            src = '<h3 class="hikage">' + srcStrs[i][3:] + '</h3>'
+            src = '<p>' +src + '</p>'
+
+        elif srcStrs[i].find('##') >= 0 :
+            src = '<h2 class="hikage">' + srcStrs[i][2:] + '</h2>'
+            src = '<p>' +src + '</p>'
+        elif srcStrs[i].find('#') >= 0 :
+            src = '<h1 class="hikage">' + srcStrs[i][1:] + '</h1>'
+            src = '<p>' + src + '</p>'
+        else:
+            src = '<p>' + srcStrs[i] + '</p>'
+
+
+        outStr += src
+
+    outStr += '</div>'
+    return outStr
+
+def TagDivWaku(srcStr):
+
+    #一行づつ取得
+    srcStrs =  srcStr.split("\n")
+    outStr = '<div class="hikage_box">'
 
     mode = 0
     #一行ずつ処理する
@@ -289,9 +350,12 @@ if __name__ == '__main__':
 
     #前処理
     #行頭の.を削除する
-    src_txt = src_txt.replace(".\n", "\n", 1000)
+    src_txt = re.sub('^\.', "", src_txt,flags=re.MULTILINE)
 
-    #print(src_txt)
+    print src_txt
+    print '<><><><>'
+    exit
+
     blocks = BlockConvert(src_txt)
 
 
