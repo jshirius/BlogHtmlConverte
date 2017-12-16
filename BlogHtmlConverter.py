@@ -352,10 +352,6 @@ if __name__ == '__main__':
     #行頭の.を削除する
     src_txt = re.sub('^\.', "", src_txt,flags=re.MULTILINE)
 
-    print src_txt
-    print '<><><><>'
-    exit
-
     blocks = BlockConvert(src_txt)
 
 
