@@ -31,6 +31,7 @@ StrBlock型の変数にデータをセットする
 [talk_q]
 [talk_a]
 [list_1]
+[div_waku]
 [ad]
 """
 def BlockConvert(src_txt):
@@ -286,6 +287,9 @@ if __name__ == '__main__':
     src_txt = f.read()
     f.close()
 
+    #前処理
+    #行頭の.を削除する
+    src_txt = src_txt.replace(".\n", "\n", 1000)
 
     #print(src_txt)
     blocks = BlockConvert(src_txt)
