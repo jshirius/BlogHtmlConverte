@@ -22,8 +22,10 @@ KIND_TALK_A_AREA = 3
 KIND_LIST_1 = 4
 KIND_DIV_WAKU = 5
 KIND_AD_AREA = 6
+KIND_CODE = 7
 
 MODE_LIST_1 = 1
+MODE_CODE = 2
 
 """
 StrBlock型の変数にデータをセットする
@@ -163,6 +165,22 @@ def GetBlockString(startIndex, src_txt):
         getStr = src_txt[index+len('[list_1]') + 1:nextIndex-1]
         closeTagLen = len('[/list_1]')
 
+    #codeタグ
+    if(index >= 0 and index < minIndex):
+        minIndex = index
+
+        kind = KIND_CODE
+        
+        nextIndex = src_txt.find('[/code]',minIndex)  # indexは1(2文字目)
+
+        #print nextIndex
+
+        # codeの要素を取ってみる
+        #-1している理由は、[/code]の前が改行コードのため
+        getStr = src_txt[index+len('[code]') + 1:nextIndex-1]
+        closeTagLen = len('[/code]')
+  
+
     #枠の表示
     index = src_txt.find('[div_waku]', startIndex)
     if(index >= 0 and index < minIndex):
@@ -226,22 +244,36 @@ def TagDiv(srcStr):
             src = u'</ul>'
             mode = 0
 
+
+        if srcStrs[i].find('[code]') >= 0 :    #codeか
+            src = u'<pre><code>' 
+            mode = MODE_CODE
+
+        elif srcStrs[i].find('[/code]') >= 0 :    #code終了か
+            src = u'</code></pre>'
+            mode = 0
+
+
         elif mode == MODE_LIST_1:
             src = '<li>'+ srcStrs[i] + '</li>'
             #リスト作成
 
-        elif srcStrs[i].find('###') >= 0 :
+        elif srcStrs[i].find('###') >= 0 and mode != MODE_CODE:
             src = '<h3 class="hikage">' + srcStrs[i][3:] + '</h3>'
             src = '<p>' +src + '</p>'
 
-        elif srcStrs[i].find('##') >= 0 :
+        elif srcStrs[i].find('##') >= 0 and mode != MODE_CODE:
             src = '<h2 class="hikage">' + srcStrs[i][2:] + '</h2>'
             src = '<p>' +src + '</p>'
-        elif srcStrs[i].find('#') >= 0 :
+        elif srcStrs[i].find('#') >= 0 and mode != MODE_CODE :
             src = '<h1 class="hikage">' + srcStrs[i][1:] + '</h1>'
             src = '<p>' + src + '</p>'
         else:
-            src = '<p>' + srcStrs[i] + '</p>'
+            if(mode == MODE_CODE):    
+                #ソースコード入力モード
+                src = srcStrs[i] + '\n';
+            else:
+                src = '<p>' + srcStrs[i] + '</p>'
 
 
         outStr += src
