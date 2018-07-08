@@ -259,14 +259,14 @@ def TagDiv(srcStr):
             #リスト作成
 
         elif srcStrs[i].find('###') >= 0 and mode != MODE_CODE:
-            src = '<h3 class="hikage">' + srcStrs[i][3:] + '</h3>'
+            src = '<h4 class="hikage2">' + srcStrs[i][3:] + '</h4>'
             src = '<p>' +src + '</p>'
 
         elif srcStrs[i].find('##') >= 0 and mode != MODE_CODE:
-            src = '<h2 class="hikage">' + srcStrs[i][2:] + '</h2>'
+            src = '<h3 class="hikage2">' + srcStrs[i][2:] + '</h3>'
             src = '<p>' +src + '</p>'
         elif srcStrs[i].find('#') >= 0 and mode != MODE_CODE :
-            src = '<h1 class="hikage">' + srcStrs[i][1:] + '</h1>'
+            src = '<h2 class="hikage2">' + srcStrs[i][1:] + '</h2>'
             src = '<p>' + src + '</p>'
         else:
             if(mode == MODE_CODE):    
@@ -305,14 +305,14 @@ def TagDivWaku(srcStr):
             #リスト作成
 
         elif srcStrs[i].find('###') >= 0 :
-            src = '<h3 class="hikage">' + srcStrs[i][3:] + '</h3>'
+            src = '<h4 class="hikage2">' + srcStrs[i][3:] + '</h4>'
             src = '<p>' +src + '</p>'
 
         elif srcStrs[i].find('##') >= 0 :
-            src = '<h2 class="hikage">' + srcStrs[i][2:] + '</h2>'
+            src = '<h3 class="hikage2">' + srcStrs[i][2:] + '</h3>'
             src = '<p>' +src + '</p>'
         elif srcStrs[i].find('#') >= 0 :
-            src = '<h1 class="hikage">' + srcStrs[i][1:] + '</h1>'
+            src = '<h2 class="hikage2">' + srcStrs[i][1:] + '</h2>'
             src = '<p>' + src + '</p>'
         else:
             src = '<p>' + srcStrs[i] + '</p>'
