@@ -158,7 +158,7 @@ def GetBlockString(startIndex, src_txt):
         
         nextIndex = src_txt.find('[/list_1]',minIndex)  # indexは1(2文字目)
 
-        #print nextIndex
+        #print "list fined"
 
         # list_1の要素を取ってみる
         #-1している理由は、[/list_1]の前が改行コードのため
@@ -245,7 +245,7 @@ def TagDiv(srcStr):
             mode = 0
 
 
-        if srcStrs[i].find('[code]') >= 0 :    #codeか
+        elif srcStrs[i].find('[code]') >= 0 :    #codeか
             src = u'<pre><code>' 
             mode = MODE_CODE
 
