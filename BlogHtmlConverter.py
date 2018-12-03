@@ -23,9 +23,11 @@ KIND_LIST_1 = 4
 KIND_DIV_WAKU = 5
 KIND_AD_AREA = 6
 KIND_CODE = 7
+KIND_QUOTE = 8
 
 MODE_LIST_1 = 1
 MODE_CODE = 2
+MODE_QUOTE = 3
 
 """
 StrBlock型の変数にデータをセットする
@@ -36,6 +38,8 @@ StrBlock型の変数にデータをセットする
 [list_1]
 [div_waku]
 [ad]
+[code]
+[blockquote]
 """
 def BlockConvert(src_txt):
 
@@ -253,6 +257,13 @@ def TagDiv(srcStr):
             src = u'</code></pre>'
             mode = 0
 
+        elif srcStrs[i].find('[quote]') >= 0 :    #quoteか
+            src = u'<blockquote>' 
+            mode = MODE_QUOTE
+
+        elif srcStrs[i].find('[/quote]') >= 0 :    #quote終了か
+            src = u'</blockquote>'
+            mode = 0
 
         elif mode == MODE_LIST_1:
             src = '<li>'+ srcStrs[i] + '</li>'
